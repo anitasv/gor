@@ -23,6 +23,7 @@ type ESPlugin struct {
 	Index   string
 	indexor *core.BulkIndexer
 	done    chan bool
+	title   string
 }
 
 type ESRequestResponse struct {
@@ -48,6 +49,7 @@ type ESRequestResponse struct {
 	RespSetCookie        string         `json:"Resp_Set-Cookie,omitempty"`
 	Rtt                  int64          `json:"RTT"`
 	Timestamp            time.Time
+	Title				 string			`json:"title"`
 }
 
 // Parse ElasticSearch URI
@@ -68,7 +70,7 @@ func parseURI(URI string) (err error, host string, port string, index string) {
 	return
 }
 
-func (p *ESPlugin) Init(URI string) {
+func (p *ESPlugin) Init(URI string, title string) {
 	var err error
 
 	err, p.Host, p.ApiPort, p.Index = parseURI(URI)
@@ -88,6 +90,8 @@ func (p *ESPlugin) Init(URI string) {
 	// no need to burn ressources otherwise
 	// go p.ErrorHandler()
 
+	p.title = title
+	
 	log.Println("Initialized Elasticsearch Plugin")
 	return
 }
@@ -142,6 +146,7 @@ func (p *ESPlugin) ResponseAnalyze(req *http.Request, resp *http.Response, start
 		RespSetCookie:        resp.Header.Get("Set-Cookie"),
 		Rtt:                  rtt,
 		Timestamp:            t,
+		Title:	              p.title,
 	}
 	j, err := json.Marshal(&esResp)
 	if err != nil {

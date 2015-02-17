@@ -67,7 +67,15 @@ type HTTPOutput struct {
 	queueStats *GorStat
 }
 
-func NewHTTPOutput(address string, headers HTTPHeaders, methods HTTPMethods, urlRegexp HTTPUrlRegexp, headerFilters HTTPHeaderFilters, headerHashFilters HTTPHeaderHashFilters, elasticSearchAddr string, outputHTTPUrlRewrite UrlRewriteMap) io.Writer {
+func NewHTTPOutput(address string, 
+	headers HTTPHeaders, 
+	methods HTTPMethods, 
+	urlRegexp HTTPUrlRegexp, 
+	headerFilters HTTPHeaderFilters, 
+	headerHashFilters HTTPHeaderHashFilters, 
+	elasticSearchAddr string, 
+	outputHTTPUrlRewrite UrlRewriteMap,
+    elasticSearchTitle string) io.Writer {
 
 	o := new(HTTPOutput)
 
@@ -100,7 +108,7 @@ func NewHTTPOutput(address string, headers HTTPHeaders, methods HTTPMethods, url
 
 	if elasticSearchAddr != "" {
 		o.elasticSearch = new(ESPlugin)
-		o.elasticSearch.Init(elasticSearchAddr)
+		o.elasticSearch.Init(elasticSearchAddr, elasticSearchTitle)
 	}
 
 	go o.WorkerMaster()

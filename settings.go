@@ -38,6 +38,7 @@ type AppSettings struct {
 	outputHTTPHeaderFilters     HTTPHeaderFilters
 	outputHTTPHeaderHashFilters HTTPHeaderHashFilters
 	outputHTTPElasticSearch     string
+	outputHTTPElasticSearchTitle string
 	outputHTTPWorkers           int
 	outputHTTPStats             bool
 }
@@ -82,6 +83,7 @@ func init() {
 	flag.BoolVar(&Settings.outputHTTPStats, "output-http-stats", false, "Report http output queue stats to console every 5 seconds.")
 
 	flag.StringVar(&Settings.outputHTTPElasticSearch, "output-http-elasticsearch", "", "Send request and response stats to ElasticSearch:\n\tgor --input-raw :8080 --output-http staging.com --output-http-elasticsearch 'es_host:api_port/index_name'")
+	flag.StringVar(&Settings.outputHTTPElasticSearchTitle, "output-http-elasticsearch-title", "", "The title of elastic search document")
 	flag.Var(&Settings.outputHTTPUrlRewrite, "output-http-rewrite-url", "Rewrite the requst url based on a mapping:\n\tgor --input-raw :8080 --output-http staging.com --output-http-rewrite-url /xml_test/interface.php:/api/service.do")
 }
 
