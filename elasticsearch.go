@@ -50,6 +50,7 @@ type ESRequestResponse struct {
 	Rtt                  int64          `json:"RTT"`
 	Timestamp            time.Time
 	Title				 string			`json:"title"`
+	Status				 string			`json:"Client_Status"`
 }
 
 // Parse ElasticSearch URI
@@ -116,14 +117,31 @@ func (p *ESPlugin) RttDurationToMs(d time.Duration) int64 {
 }
 
 func (p *ESPlugin) ResponseAnalyze(req *http.Request, resp *http.Response, start, stop time.Time) {
-	if resp == nil {
-		// nil http response - skipped elasticsearch export for this request
-		return
-	}
 	t := time.Now()
 	rtt := p.RttDurationToMs(stop.Sub(start))
 
-	esResp := ESRequestResponse{
+	esResp := p.MakeEsResp(req, resp, t, rtt);
+	
+	j, err := json.Marshal(&esResp)
+	if err != nil {
+		log.Println(err)
+	} else {
+		p.indexor.Index(p.Index, "RequestResponse", "", "", &t, j, true)
+	}
+	return
+}
+
+func  (p *ESPlugin) MakeEsResp(req *http.Request, resp *http.Response, t Time, rtt int64) ESRequestResponse {
+	if resp == nil {
+		return p.MakeEsRespFail(req, t, rtt)
+	} else {
+		return p.MakeEsRespSuccess(req, resp, t, rtt)
+		
+	}
+}
+
+func  (p *ESPlugin) MakeEsRespSuccess(req *http.Request, resp *http.Response, t Time, rtt int64) ESRequestResponse {
+	return ESRequestResponse {
 		ReqUrl:               req.URL.String(),
 		ReqMethod:            req.Method,
 		ReqUserAgent:         req.UserAgent(),
@@ -147,12 +165,35 @@ func (p *ESPlugin) ResponseAnalyze(req *http.Request, resp *http.Response, start
 		Rtt:                  rtt,
 		Timestamp:            t,
 		Title:	              p.title,
+		Status:				  "Success",
 	}
-	j, err := json.Marshal(&esResp)
-	if err != nil {
-		log.Println(err)
-	} else {
-		p.indexor.Index(p.Index, "RequestResponse", "", "", &t, j, true)
+}
+
+func  (p *ESPlugin) MakeEsRespFail(req *http.Request, t Time, rtt int64) ESRequestResponse {
+	return ESRequestResponse {
+		ReqUrl:               req.URL.String(),
+		ReqMethod:            req.Method,
+		ReqUserAgent:         req.UserAgent(),
+		ReqAcceptLanguage:    req.Header.Get("Accept-Language"),
+		ReqAccept:            req.Header.Get("Accept"),
+		ReqAcceptEncoding:    req.Header.Get("Accept-Encoding"),
+		ReqIfModifiedSince:   req.Header.Get("If-Modified-Since"),
+		ReqConnection:        req.Header.Get("Connection"),
+		ReqCookies:           req.Cookies(),
+		RespStatus:           "0 Client timeout",
+		RespStatusCode:       0,
+		RespProto:            "HTTP/1.1",
+		RespContentLength:    0,
+		RespContentType:      nil,
+		RespTransferEncoding: nil,
+		RespContentEncoding:  nil,
+		RespExpires:          nil,
+		RespCacheControl:     nil,
+		RespVary:             nil,
+		RespSetCookie:        nil,
+		Rtt:                  rtt,
+		Timestamp:            t,
+		Title:	              p.title,
+		Status:               "Fail",
 	}
-	return
 }
