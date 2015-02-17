@@ -131,7 +131,7 @@ func (p *ESPlugin) ResponseAnalyze(req *http.Request, resp *http.Response, start
 	return
 }
 
-func  (p *ESPlugin) MakeEsResp(req *http.Request, resp *http.Response, t Time, rtt int64) ESRequestResponse {
+func  (p *ESPlugin) MakeEsResp(req *http.Request, resp *http.Response, t time.Time, rtt int64) ESRequestResponse {
 	if resp == nil {
 		return p.MakeEsRespFail(req, t, rtt)
 	} else {
@@ -140,7 +140,7 @@ func  (p *ESPlugin) MakeEsResp(req *http.Request, resp *http.Response, t Time, r
 	}
 }
 
-func  (p *ESPlugin) MakeEsRespSuccess(req *http.Request, resp *http.Response, t Time, rtt int64) ESRequestResponse {
+func  (p *ESPlugin) MakeEsRespSuccess(req *http.Request, resp *http.Response, t time.Time, rtt int64) ESRequestResponse {
 	return ESRequestResponse {
 		ReqUrl:               req.URL.String(),
 		ReqMethod:            req.Method,
@@ -169,7 +169,7 @@ func  (p *ESPlugin) MakeEsRespSuccess(req *http.Request, resp *http.Response, t 
 	}
 }
 
-func  (p *ESPlugin) MakeEsRespFail(req *http.Request, t Time, rtt int64) ESRequestResponse {
+func  (p *ESPlugin) MakeEsRespFail(req *http.Request, t time.Time, rtt int64) ESRequestResponse {
 	return ESRequestResponse {
 		ReqUrl:               req.URL.String(),
 		ReqMethod:            req.Method,
@@ -184,13 +184,6 @@ func  (p *ESPlugin) MakeEsRespFail(req *http.Request, t Time, rtt int64) ESReque
 		RespStatusCode:       0,
 		RespProto:            "HTTP/1.1",
 		RespContentLength:    0,
-		RespContentType:      nil,
-		RespTransferEncoding: nil,
-		RespContentEncoding:  nil,
-		RespExpires:          nil,
-		RespCacheControl:     nil,
-		RespVary:             nil,
-		RespSetCookie:        nil,
 		Rtt:                  rtt,
 		Timestamp:            t,
 		Title:	              p.title,
