@@ -104,7 +104,7 @@ func InitPlugins() {
 			Settings.outputHTTPHeaderHashFilters, 
 			Settings.outputHTTPElasticSearch, 
 			Settings.outputHTTPUrlRewrite,
-		    Settings.outputHTTPElasticSearchTitle,
+			Settings.outputHTTPElasticSearchTitle,
 		)
 	}
 }
