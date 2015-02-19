@@ -120,7 +120,7 @@ func (p *ESPlugin) ResponseAnalyze(req *http.Request, resp *http.Response, start
 	t := time.Now()
 	rtt := p.RttDurationToMs(stop.Sub(start))
 
-	esResp := p.MakeEsResp(req, resp, t, rtt);
+	esResp := p.MakeEsResp(req, resp, start, rtt);
 	
 	j, err := json.Marshal(&esResp)
 	if err != nil {
