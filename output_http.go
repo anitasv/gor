@@ -75,7 +75,7 @@ func NewHTTPOutput(address string,
 	headerHashFilters HTTPHeaderHashFilters, 
 	elasticSearchAddr string, 
 	outputHTTPUrlRewrite UrlRewriteMap,
-    elasticSearchTitle string) io.Writer {
+	elasticSearchTitle string) io.Writer {
 
 	o := new(HTTPOutput)
 
